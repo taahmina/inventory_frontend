@@ -1,11 +1,10 @@
-
 <template>
-  <aside class="left-side-bar">
+  <aside class="left-side-bar" v-if="uid">
     <!-- Brand Logo -->
     <div class="brand-logo">
-      <a href="#">
+      <router-link to="/">
         <img src="/backendassets/vendors/images/deskapp-logo-white.svg" alt="logo" class="light-logo" />
-      </a>
+      </router-link>
     </div>
 
     <!-- Sidebar Menu -->
@@ -14,10 +13,10 @@
         <ul id="accordion-menu">
           <!-- Dashboard -->
           <li>
-            <a href="#" class="dropdown-toggle">
+            <router-link to="/">
               <span class="micon dw dw-house-1"></span>
               <span class="mtext">Dashboard</span>
-            </a>
+            </router-link>
           </li>
 
           <!-- User Management -->
@@ -27,9 +26,8 @@
               <span class="mtext">User Management</span>
             </a>
             <ul v-show="openMenus.userManagement" class="submenu">
-              <li>Users</li>
-              <li>Roles</li>
-              <li>Sales Commission Agents</li>
+              <li><router-link to="/users">Users</router-link></li>
+              <li><router-link to="/roles">Roles</router-link></li>
             </ul>
           </li>
 
@@ -40,10 +38,8 @@
               <span class="mtext">Contacts</span>
             </a>
             <ul v-show="openMenus.contacts" class="submenu">
-              <li>Suppliers</li>
-              <li>Customers</li>
-              <li>Customer Groups</li>
-              <li>Import Contacts</li>
+              <li><router-link to="/suppliers">Suppliers</router-link></li>
+              <li><router-link to="/customers">Customers</router-link></li>
             </ul>
           </li>
 
@@ -51,20 +47,13 @@
           <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('products')">
               <span class="micon dw dw-box"></span>
-              <span class="mtext">Products Management</span>
+              <span class="mtext">Products</span>
             </a>
             <ul v-show="openMenus.products" class="submenu">
-              <li>List Products</li>
-              <li>Add Products</li>
-              <li>Print Labels</li>
-              <li>Variations</li>
-              <li>Import Products</li>
-              <li>Import Opening Stock</li>
-              <li>Selling Price Group</li>
-              <li>Units</li>
-              <li>Categories</li>
-              <li>Brands</li>
-              <li>Warranties</li>
+              <li><router-link to="/products">List Products</router-link></li>
+              <li><router-link to="/products/add">Add Product</router-link></li>
+              <li><router-link to="/categories">Categories</router-link></li>
+              <li><router-link to="/inventory-logs">Stock Logs</router-link></li>
             </ul>
           </li>
 
@@ -75,9 +64,8 @@
               <span class="mtext">Purchases</span>
             </a>
             <ul v-show="openMenus.purchases" class="submenu">
-              <li>List Purchase</li>
-              <li>Add Purchase</li>
-              <li>List Purchase Return</li>
+              <li><router-link to="/purchases">List Purchases</router-link></li>
+              <li><router-link to="/purchases/add">Add Purchase</router-link></li>
             </ul>
           </li>
 
@@ -88,18 +76,8 @@
               <span class="mtext">Sales</span>
             </a>
             <ul v-show="openMenus.sales" class="submenu">
-              <li>All Sales</li>
-              <li>Add Sale</li>
-              <li>List POS</li>
-              <li>POS</li>
-              <li>List Draft</li>
-              <li>Add Draft</li>
-              <li>Add Quotation</li>
-              <li>List Quotation</li>
-              <li>Sales Return</li>
-              <li>Shipment</li>
-              <li>Discount</li>
-              <li>Import Sales</li>
+              <li><router-link to="/sales">All Sales</router-link></li>
+              <li><router-link to="/sales/add">Add Sale</router-link></li>
             </ul>
           </li>
 
@@ -110,9 +88,20 @@
               <span class="mtext">Expenses</span>
             </a>
             <ul v-show="openMenus.expenses" class="submenu">
-              <li>List Expense</li>
-              <li>Add Expense</li>
-              <li>Expense Categories</li>
+              <li><router-link to="/expenses">List Expense</router-link></li>
+              <li><router-link to="/expenses/add">Add Expense</router-link></li>
+            </ul>
+          </li>
+
+          <!-- Employees / Salary -->
+          <li class="dropdown">
+            <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('employees')">
+              <span class="micon dw dw-id-card"></span>
+              <span class="mtext">Employees</span>
+            </a>
+            <ul v-show="openMenus.employees" class="submenu">
+              <li><router-link to="/employees">List Employees</router-link></li>
+              <li><router-link to="/salary-payments/add">Pay Salary</router-link></li>
             </ul>
           </li>
 
@@ -123,46 +112,20 @@
               <span class="mtext">Reports</span>
             </a>
             <ul v-show="openMenus.reports" class="submenu">
-              <li>Profit/Loss Report</li>
-              <li>Product Purchase Report</li>
-              <li>Sales Representative Report</li>
-              <li>Register Report</li>
-              <li>Expense Report</li>
-              <li>Sales Payment Report</li>
-              <li>Purchase Payment Report</li>
-              <li>Product Sale Report</li>
-              <li>Item Report</li>
-              <li>Purchase & Sale</li>
-              <li>Trending Products</li>
-              <li>Stock Adjustment Report</li>
-              <li>Customer Group Report</li>
-              <li>Supplier Report</li>
-              <li>Customer Report</li>
-              <li>Tax Report</li>
-              <li>Activity Log</li>
+              <li><router-link to="/reports/profit-loss">Profit/Loss Report</router-link></li>
+              <li><router-link to="/reports/sales">Sales Report</router-link></li>
+              <li><router-link to="/reports/purchases">Purchase Report</router-link></li>
+              <li><router-link to="/reports/expenses">Expense Report</router-link></li>
+              <li><router-link to="/reports/stock">Stock Report</router-link></li>
             </ul>
-          </li>
-
-          <!-- Notifications -->
-          <li>
-            <a href="#" class="dropdown-toggle">Notifications</a>
           </li>
 
           <!-- Settings -->
-          <li class="dropdown">
-            <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('settings')">
+          <li>
+            <router-link to="/settings">
               <span class="micon dw dw-settings2"></span>
               <span class="mtext">Settings</span>
-            </a>
-            <ul v-show="openMenus.settings" class="submenu">
-              <li>Business Setting</li>
-              <li>Business Location</li>
-              <li>Invoice</li>
-              <li>Barcode</li>
-              <li>Receipt Printer</li>
-              <li>Tax Rate</li>
-              <li>Package Subscription</li>
-            </ul>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -180,12 +143,29 @@ const openMenus = reactive({
   purchases: false,
   sales: false,
   expenses: false,
-  reports: false,
-  settings: false
+  employees: false,
+  reports: false
 })
 
 const toggleMenu = (menu) => {
   openMenus[menu] = !openMenus[menu]
+}
+</script>
+
+
+
+<script>
+
+export default {
+  name: 'Sidebar',
+  data() {
+    return {
+      uid:sessionStorage.getItem('uid')
+    };
+  },
+  methods: {
+    
+  }
 }
 </script>
 
@@ -208,16 +188,6 @@ const toggleMenu = (menu) => {
   font-weight: 500;
 }
 
-.arrow {
-  margin-left: auto;
-}
-</style>
-
-
-<script setup>
-</script>
-
-<style scoped>
 .left-side-bar {
   background: #0a0a4e;
   color: #fff;
@@ -226,8 +196,8 @@ const toggleMenu = (menu) => {
   position: fixed;
   left: 0;
   top: 0;
-
 }
+
 .brand-logo {
   text-align: center;
   padding: 20px 0;
