@@ -33,14 +33,51 @@ class DataService {
   }
 
 // Products
-  
-ProductList() { return http.get("/products"); }
-SingleProduct(id) { return http.get(`/products/${id}`); }
-AddProduct(data) { return http.post("/products", data); }
-UpdateProduct(id, data) { return http.post(`/products/${id}`, data, { headers: {'Content-Type':'multipart/form-data'}}); }
-DeleteProduct(id) { return http.delete(`/products/${id}`); }
+  ProductList() {
+  return http.get("/products");
+}
+
+SingleProduct(id) {
+  return http.get(`/products/${id}`);
+}
+
+AddProduct(data) {
+  return http.post("/products", data, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+}
+UpdateProduct(id, data) {
+  // Use PUT for updating
+  return http.put(`/products/${id}`, data, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+}
+
+DeleteProduct(id) {
+  return http.delete(`/products/${id}`);
+}
 
 
+// ===== SUPPLIER CRUD =====
+  SupplierList() {
+    return http.get("/suppliers");
+  }
+
+  getSupplier(id) {
+    return http.get(`/suppliers/${id}`);
+  }
+
+  createSupplier(data) {
+    return http.post("/suppliers", data);
+  }
+
+  updateSupplier(id, data) {
+    return http.put(`/suppliers/${id}`, data);
+  }
+
+  deleteSupplier(id) {
+    return http.delete(`/suppliers/${id}`);
+  }
 
 }
 

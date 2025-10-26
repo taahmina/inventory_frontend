@@ -53,6 +53,24 @@ const routes = [
   props: true, // allow route params as props
 },
 
+// ===== Supplier Routes =====
+{
+  path: "/suppliers",
+  name: "supplier_list",
+  component: () => import("../views/Suppliers/SupplierList.vue"),
+},
+{
+  path: "/add_supplier",
+  name: "supplier_create",
+  component: () => import("../views/Suppliers/SupplierCreate.vue"),
+},
+{
+  path: "/edit_supplier/:id",
+  name: "supplier_edit",
+  component: () => import("../views/Suppliers/SupplierEdit.vue"),
+  props: true,
+},
+
 
 ]
 

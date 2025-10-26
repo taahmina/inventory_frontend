@@ -63,14 +63,15 @@
         <div class="col-md-4 mb-3">
           <label class="form-label">Status</label>
           <select class="form-select" v-model="product.status" required>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option :value="1">Active</option>
+            <option :value="0">Inactive</option>
           </select>
+
         </div>
 
         <div class="col-md-4 mb-3">
           <label class="form-label">Image</label>
-          <input type="file" @change="handleImage" class="form-control">
+          <input type="file" @change="handleImage" accept="image/*" class="form-control">
         </div>
 
         <div class="col-md-12">
@@ -103,36 +104,69 @@ export default {
         buy_price: 0,
         sell_price: 0,
         stock: 0,
-        status: "active",
+        status: 1
+      
       },
     };
   },
   methods: {
     fetchCategories() {
-      DataService.CategoryList().then(res => this.categories = res.data).catch(err => console.log(err));
+      DataService.CategoryList()
+        .then(res => this.categories = res.data)
+        .catch(err => console.log(err));
     },
     fetchSuppliers() {
-      DataService.SupplierList().then(res => this.suppliers = res.data).catch(err => console.log(err));
+      DataService.SupplierList()
+        .then(res => this.suppliers = res.data)
+        .catch(err => console.log(err));
     },
     handleImage(event) {
-      this.product.image = event.target.files[0];
+      const file = event.target.files[0];
+      if (file && file.type.startsWith("image/")) {
+        this.product.image = file;
+      } else {
+        alert("Please select a valid image file (jpeg, png, jpg, gif).");
+        this.product.image = null;
+        event.target.value = "";
+      }
     },
     addProduct() {
-      const formData = new FormData();
-      for (const key in this.product) {
-        formData.append(key, this.product[key]);
+      if (!this.product.image) {
+        alert("Please select an image for the product.");
+        return;
       }
+
+      const formData = new FormData();
+
+      // Map status to 1 (active) or 0 (inactive)
+      const statusValue = this.product.status === 'active' ? 1 : 0;
+
+      for (const key in this.product) {
+        if (key === "status") {
+          formData.append(key, statusValue);
+        } else {
+          formData.append(key, this.product[key]);
+        }
+      }
+
       DataService.AddProduct(formData)
         .then(() => {
           alert("Product added successfully!");
           this.$router.push({ name: "product_list" });
         })
-        .catch(err => console.log(err));
-    }
+        .catch(err => {
+          if (err.response && err.response.data) {
+            console.log("Error:", err.response.data);
+            alert(JSON.stringify(err.response.data));
+          } else {
+            console.log(err);
+          }
+        });
+    },
   },
   mounted() {
     this.fetchCategories();
-    //this.fetchSuppliers();
-  }
+    this.fetchSuppliers();
+  },
 };
 </script>
