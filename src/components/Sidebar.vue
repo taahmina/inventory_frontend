@@ -50,8 +50,7 @@
               <span class="mtext">Products</span>
             </a>
             <ul v-show="openMenus.products" class="submenu">
-              <li><router-link to="/products">List Products</router-link></li>
-              <li><router-link to="/products/add">Add Product</router-link></li>
+              <li><router-link to="/products">Products</router-link></li>
               <li><router-link to="/categories">Categories</router-link></li>
               <li><router-link to="/inventory-logs">Stock Logs</router-link></li>
             </ul>
@@ -191,7 +190,7 @@ export default {
 .left-side-bar {
   background: #0a0a4e;
   color: #fff;
-  width: 300px;
+  width: 250px;
   height: 100vh;
   position: fixed;
   left: 0;
