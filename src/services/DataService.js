@@ -48,7 +48,7 @@ AddProduct(data) {
 }
 UpdateProduct(id, data) {
   // Use PUT for updating
-  return http.put(`/products/${id}`, data, {
+  return http.post(`/products/${id}`, data, {
     headers: { "Content-Type": "multipart/form-data" }
   });
 }
@@ -78,6 +78,46 @@ DeleteProduct(id) {
   deleteSupplier(id) {
     return http.delete(`/suppliers/${id}`);
   }
+
+
+// ===== Purchase CRUD =====
+  PurchaseList() {
+    return http.get("/purchases");
+  }
+
+  GetPurchase(id) {
+    return http.get(`/purchases/${id}`);
+  }
+
+  AddPurchase(data) {
+    return http.post("/purchases", data);
+  }
+
+  UpdatePurchase(id, data) {
+    return http.put(`/purchases/${id}`, data);
+  }
+
+  DeletePurchase(id) {
+    return http.delete(`/purchases/${id}`);
+  }
+
+  // ===== PurchaseItem CRUD =====
+  PurchaseItemList() {
+    return http.get("/purchase-items");
+  }
+
+  GetPurchaseItem(id) {
+    return http.get(`/purchase-items/${id}`);
+  }
+
+  UpdatePurchaseItem(id, data) {
+    return http.put(`/purchase-items/${id}`, data);
+  }
+
+  DeletePurchaseItem(id) {
+    return http.delete(`/purchase-items/${id}`);
+  }
+
 
 }
 

@@ -30,13 +30,19 @@ export default {
   name: "SupplierEdit",
   data() {
     return {
-      supplier: {},
+      supplier: {
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+      },
     };
   },
   methods: {
     getSupplier() {
-      DataService.SupplierList(this.$route.params.id)
+      DataService.getSupplier(this.$route.params.id)
         .then((response) => {
+         
           this.supplier = response.data;
         })
         .catch((e) => console.log(e));

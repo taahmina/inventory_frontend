@@ -4,6 +4,22 @@
     <form @submit.prevent="addProduct" enctype="multipart/form-data">
       <div class="row">
 
+          <div class="col-md-4 mb-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" v-model="product.category_id" required>
+            <option value="">Select Category</option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Supplier</label>
+          <select class="form-select" v-model="product.supplier_id">
+            <option value="">Select Supplier</option>
+            <option v-for="sup in suppliers" :key="sup.id" :value="sup.id">{{ sup.name }}</option>
+          </select>
+        </div>
+
         <div class="col-md-4 mb-3">
           <label class="form-label">Name</label>
           <input type="text" class="form-control" v-model="product.name" required>
@@ -19,21 +35,7 @@
           <input type="text" class="form-control" v-model="product.sku">
         </div>
 
-        <div class="col-md-4 mb-3">
-          <label class="form-label">Category</label>
-          <select class="form-select" v-model="product.category_id" required>
-            <option value="">Select Category</option>
-            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-          </select>
-        </div>
-
-        <div class="col-md-4 mb-3">
-          <label class="form-label">Supplier</label>
-          <select class="form-select" v-model="product.supplier_id">
-            <option value="">Select Supplier</option>
-            <option v-for="sup in suppliers" :key="sup.id" :value="sup.id">{{ sup.name }}</option>
-          </select>
-        </div>
+      
 
         <div class="col-md-4 mb-3">
           <label class="form-label">Brand</label>
@@ -59,6 +61,12 @@
           <label class="form-label">Stock</label>
           <input type="number" class="form-control" v-model="product.stock" required>
         </div>
+        
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Image</label>
+          <input type="file" @change="handleImage" accept="image/*" class="form-control">
+        </div>
+
 
         <div class="col-md-4 mb-3">
           <label class="form-label">Status</label>
@@ -69,11 +77,7 @@
 
         </div>
 
-        <div class="col-md-4 mb-3">
-          <label class="form-label">Image</label>
-          <input type="file" @change="handleImage" accept="image/*" class="form-control">
-        </div>
-
+        
         <div class="col-md-12">
           <button class="btn btn-primary" type="submit">Add Product</button>
         </div>

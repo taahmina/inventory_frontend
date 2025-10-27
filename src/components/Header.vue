@@ -12,9 +12,7 @@
     <img :src="userImage" class="user-avatar" width="32" height="32" />
     <span class="user-name">{{ userName }}</span>
     <ul class="user-menu">
-      <li><a href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-      <li><a href="#"><i class="fas fa-cog me-2"></i>Settings </a></li>
-      <li><hr /></li>
+      <li><a href="#"><i class=""></i></a></li>
       <li><a href="#" class="text-danger" @click="logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
     </ul>
   </div>

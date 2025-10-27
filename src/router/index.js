@@ -72,6 +72,25 @@ const routes = [
 },
 
 
+  // ===== Purchase Routes =====
+  {
+    path: "/purchases",
+    name: "purchase_list",
+    component: () => import("../views/Purchases/PurchaseList.vue"),
+  },
+  {
+    path: "/purchases/add",
+    name: "purchase_create",
+    component: () => import("../views/Purchases/PurchaseCreate.vue"),
+  },
+  {
+    path: "/purchases/edit/:id",
+    name: "purchase_edit",
+    component: () => import("../views/Purchases/PurchaseEdit.vue"),
+    props: true,
+  }
+
+
 ]
 
 const router = createRouter({

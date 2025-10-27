@@ -63,8 +63,9 @@
               <span class="mtext">Purchases</span>
             </a>
             <ul v-show="openMenus.purchases" class="submenu">
-              <li><router-link to="/purchases">List Purchases</router-link></li>
-              <li><router-link to="/purchases/add">Add Purchase</router-link></li>
+              <li><router-link to="/purchases">Purchases</router-link></li>
+                 
+             
             </ul>
           </li>
 
@@ -190,7 +191,7 @@ export default {
 .left-side-bar {
   background: #0a0a4e;
   color: #fff;
-  width: 250px;
+  width: 230px;
   height: 100vh;
   position: fixed;
   left: 0;
