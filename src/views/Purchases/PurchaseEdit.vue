@@ -102,7 +102,8 @@ export default {
         tax: 0,
         paid_amount: 0,
         note: ""
-      }
+      },
+      deletedItemIds: [] // Track removed items for deletion
     };
   },
   computed: {
@@ -136,7 +137,6 @@ export default {
       const id = this.$route.params.id;
       DataService.GetPurchase(id)
         .then(res => {
-          // Map items to ensure they have necessary fields
           this.purchase = {
             ...res.data,
             items: res.data.items.map(i => ({
@@ -153,49 +153,63 @@ export default {
       this.purchase.items.push({ product_id: "", quantity: 1, unit_price: 0 });
     },
     removeItem(index, item) {
-      if (item.id) {
-        if (confirm("Are you sure you want to delete this item?")) {
-          DataService.DeletePurchaseItem(item.id)
-            .then(() => this.purchase.items.splice(index, 1))
-            .catch(err => console.error(err));
-        }
-      } else {
-        this.purchase.items.splice(index, 1);
-      }
+      if (item.id) this.deletedItemIds.push(item.id);
+      this.purchase.items.splice(index, 1);
     },
     itemTotal(item) {
       return (item.quantity || 0) * (item.unit_price || 0);
     },
-    updatePurchase() {
-      // Basic validation
-      if (!this.purchase.supplier_id) {
-        alert("Please select a supplier.");
-        return;
-      }
-      if (this.purchase.items.length === 0) {
-        alert("Add at least one product.");
-        return;
-      }
+    async updatePurchase() {
+      // Validation
+      if (!this.purchase.supplier_id) return alert("Please select a supplier.");
+      if (this.purchase.items.length === 0) return alert("Add at least one product.");
       for (let i = 0; i < this.purchase.items.length; i++) {
-        if (!this.purchase.items[i].product_id) {
-          alert(`Select product for row ${i + 1}`);
-          return;
-        }
+        if (!this.purchase.items[i].product_id) return alert(`Select product for row ${i + 1}`);
       }
 
       const id = this.$route.params.id;
-      DataService.UpdatePurchase(id, this.purchase)
-        .then(() => {
-          alert("Purchase updated successfully!");
-          this.$router.push({ name: "purchase_list" });
-        })
-        .catch(err => {
-          console.error(err);
-          alert("Error updating purchase. Check console for details.");
+
+      try {
+        // 1️⃣ Update purchase meta
+        await DataService.UpdatePurchase(id, {
+          discount: this.purchase.discount,
+          tax: this.purchase.tax,
+          paid_amount: this.purchase.paid_amount,
+          note: this.purchase.note
         });
+
+        // 2️⃣ Update existing items & create new items
+        for (const item of this.purchase.items) {
+          if (item.id) {
+            await DataService.UpdatePurchaseItem(item.id, {
+              quantity: item.quantity,
+              unit_price: item.unit_price
+            });
+          } else {
+            await DataService.AddPurchaseItem({
+              purchase_id: id,
+              product_id: item.product_id,
+              quantity: item.quantity,
+              unit_price: item.unit_price
+            });
+          }
+        }
+
+        // 3️⃣ Delete removed items
+        for (const itemId of this.deletedItemIds) {
+          await DataService.DeletePurchaseItem(itemId);
+        }
+
+        alert("Purchase updated successfully!");
+        this.$router.push({ name: "purchase_list" });
+
+      } catch (err) {
+        console.error(err);
+        alert("Error updating purchase. Check console for details.");
+      }
     },
     formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
     }
   }
 };

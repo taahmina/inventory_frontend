@@ -16,6 +16,12 @@
                v-model="formData.password" placeholder="Enter a password"/>
             </div>
             <button type="button" @click="login" class="btn btn-primary w-100"> Submit</button>
+
+          <p class="text-center mt-3">
+              Don't have an account?
+              <router-link to="/register" class="text-primary">Register here</router-link>
+            </p>
+
           </form>
         </div>
       </div>

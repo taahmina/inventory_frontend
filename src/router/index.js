@@ -7,13 +7,20 @@ const routes = [
     path: "/",
     alias: "/login",
     name: "login",
-    component: () => import('../views/LoginForm.vue')
+    component: () => import('../views/LoginForm.vue'),
   },
+
+{
+  path: "/register",
+  name: "register",
+  component: () => import("../views/RegisterForm.vue"),
+},
+
   {
     path: '/dashboard',
     alias: "/dashboard",
     name: 'dashboard',
-    component: () => import('../views/Dashboard.vue')
+    component: () => import('../views/Dashboard.vue'),
     
   },
 
@@ -88,7 +95,7 @@ const routes = [
     name: "purchase_edit",
     component: () => import("../views/Purchases/PurchaseEdit.vue"),
     props: true,
-  }
+  },
 
 
 ]

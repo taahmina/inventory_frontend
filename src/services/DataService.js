@@ -4,6 +4,9 @@ class DataService {
    login(data) {
     return http.post("/login", data);
   }
+   register(data) {
+    return http.post("/register", data);
+  }
 
 // ======= Category CRUD =======
 
@@ -79,44 +82,49 @@ DeleteProduct(id) {
     return http.delete(`/suppliers/${id}`);
   }
 
+// ===== PURCHASE CRUD =====
+PurchaseList() {
+  return http.get("/purchases");
+}
 
-// ===== Purchase CRUD =====
-  PurchaseList() {
-    return http.get("/purchases");
-  }
+GetPurchase(id) {
+  return http.get(`/purchases/${id}`);
+}
 
-  GetPurchase(id) {
-    return http.get(`/purchases/${id}`);
-  }
+AddPurchase(data) {
+  return http.post("/purchases", data);
+}
 
-  AddPurchase(data) {
-    return http.post("/purchases", data);
-  }
+UpdatePurchase(id, data) {
+  return http.put(`/purchases/${id}`, data);
+}
 
-  UpdatePurchase(id, data) {
-    return http.put(`/purchases/${id}`, data);
-  }
+DeletePurchase(id) {
+  return http.delete(`/purchases/${id}`);
+}
 
-  DeletePurchase(id) {
-    return http.delete(`/purchases/${id}`);
-  }
+// ===== PURCHASE ITEM CRUD =====
+PurchaseItemList() {
+  return http.get("/purchase-items");
+}
 
-  // ===== PurchaseItem CRUD =====
-  PurchaseItemList() {
-    return http.get("/purchase-items");
-  }
+GetPurchaseItem(id) {
+  return http.get(`/purchase-items/${id}`);
+}
 
-  GetPurchaseItem(id) {
-    return http.get(`/purchase-items/${id}`);
-  }
+AddPurchaseItem(data) {
+  return http.post("/purchase-items", data);
+}
 
-  UpdatePurchaseItem(id, data) {
-    return http.put(`/purchase-items/${id}`, data);
-  }
+UpdatePurchaseItem(id, data) {
+  return http.put(`/purchase-items/${id}`, data);
+}
 
-  DeletePurchaseItem(id) {
-    return http.delete(`/purchase-items/${id}`);
-  }
+DeletePurchaseItem(id) {
+  return http.delete(`/purchase-items/${id}`);
+}
+
+
 
 
 }
