@@ -2,7 +2,8 @@
   <div class="container mt-5">
     <h2>Add Purchase</h2>
 
-    <form @submit.prevent="addPurchase">
+    <form @submit.prevent="submitPurchase">
+      <!-- Supplier and Date -->
       <div class="row mb-3">
         <div class="col-md-4">
           <label>Supplier</label>
@@ -11,14 +12,13 @@
             <option v-for="sup in suppliers" :key="sup.id" :value="sup.id">{{ sup.name }}</option>
           </select>
         </div>
-
         <div class="col-md-4">
           <label>Purchase Date</label>
           <input type="date" class="form-control" v-model="purchase.purchase_date" required>
         </div>
       </div>
 
-      <!-- Products list -->
+      <!-- Products Table -->
       <h5>Products</h5>
       <table class="table table-bordered">
         <thead class="table-light">
@@ -44,7 +44,7 @@
             <td>
               <input type="number" class="form-control" v-model.number="item.unit_price" min="0" step="0.01" required>
             </td>
-            <td>{{ formatCurrency(item.quantity * item.unit_price) }}</td>
+            <td>{{ formatCurrency(itemTotal(item)) }}</td>
             <td>
               <button type="button" class="btn btn-danger btn-sm" @click="removeItem(index)">Remove</button>
             </td>
@@ -54,7 +54,7 @@
 
       <button type="button" class="btn btn-secondary mb-3" @click="addItem">Add Product</button>
 
-      <!-- Purchase summary -->
+      <!-- Summary -->
       <div class="row mb-3">
         <div class="col-md-2">
           <label>Discount</label>
@@ -96,7 +96,7 @@ export default {
       products: [],
       purchase: {
         supplier_id: "",
-        purchase_date: new Date().toISOString().substr(0,10),
+        purchase_date: new Date().toISOString().substr(0, 10),
         items: [],
         discount: 0,
         tax: 0,
@@ -107,30 +107,30 @@ export default {
   },
   computed: {
     subtotal() {
-      return this.purchase.items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+      return this.purchase.items.reduce((sum, item) => sum + this.itemTotal(item), 0);
     },
     total() {
-      return this.subtotal - this.purchase.discount + this.purchase.tax;
+      return Math.max(this.subtotal - (this.purchase.discount || 0) + (this.purchase.tax || 0), 0);
     },
     due() {
-      return this.total - this.purchase.paid_amount;
+      return Math.max(this.total - (this.purchase.paid_amount || 0), 0);
     }
   },
   mounted() {
     this.fetchSuppliers();
     this.fetchProducts();
-    this.addItem(); // start with one product row
+    this.addItem();
   },
   methods: {
     fetchSuppliers() {
       DataService.SupplierList()
         .then(res => this.suppliers = res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
     },
     fetchProducts() {
       DataService.ProductList()
         .then(res => this.products = res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
     },
     addItem() {
       this.purchase.items.push({ product_id: "", quantity: 1, unit_price: 0 });
@@ -138,10 +138,24 @@ export default {
     removeItem(index) {
       this.purchase.items.splice(index, 1);
     },
-    addPurchase() {
-      if(this.purchase.items.length === 0) {
+    itemTotal(item) {
+      return (item.quantity || 0) * (item.unit_price || 0);
+    },
+    submitPurchase() {
+      if (!this.purchase.supplier_id) {
+        alert("Please select a supplier.");
+        return;
+      }
+      if (this.purchase.items.length === 0) {
         alert("Add at least one product.");
         return;
+      }
+      // Validate products
+      for (let i = 0; i < this.purchase.items.length; i++) {
+        if (!this.purchase.items[i].product_id) {
+          alert(`Select product for row ${i + 1}`);
+          return;
+        }
       }
 
       DataService.AddPurchase(this.purchase)
@@ -150,7 +164,7 @@ export default {
           this.$router.push({ name: "purchase_list" });
         })
         .catch(err => {
-          console.log(err);
+          console.error(err);
           alert("Error creating purchase. Check console for details.");
         });
     },

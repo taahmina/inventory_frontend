@@ -2,12 +2,8 @@
   <div class="container mt-5">
     <h2>Purchase List</h2>
 
-     <router-link to="/purchases/add" class="btn btn-primary mb-3">
-      Add New Purchase
-    </router-link>
+    <router-link to="/purchases/add" class="btn btn-primary mb-3">Add New Purchase</router-link>
 
-
-    <!-- Loading state -->
     <div v-if="loading" class="alert alert-info">Loading purchases...</div>
 
     <table v-else class="table table-bordered table-striped">
@@ -31,27 +27,30 @@
         <tr v-for="purchase in purchases" :key="purchase.id">
           <td>{{ purchase.invoice_no }}</td>
           <td>{{ purchase.supplier.name }}</td>
-          <td>{{ purchase.purchase_date }}</td>
+          <td>{{ formatDate(purchase.purchase_date) }}</td>
           <td>{{ formatCurrency(purchase.subtotal) }}</td>
           <td>{{ formatCurrency(purchase.discount) }}</td>
           <td>{{ formatCurrency(purchase.tax) }}</td>
           <td>{{ formatCurrency(purchase.total_cost) }}</td>
           <td>{{ formatCurrency(purchase.paid_amount) }}</td>
           <td>{{ formatCurrency(purchase.due_amount) }}</td>
-          <td>{{ purchase.payment_status }}</td>
+          <td>
+            <span :class="statusClass(purchase.payment_status)">
+              {{ purchase.payment_status.toUpperCase() }}
+            </span>
+          </td>
           <td>{{ purchase.note }}</td>
           <td class="d-flex gap-1 flex-wrap">
             <button class="btn btn-sm btn-info" @click="toggleItems(purchase.id)">
               {{ expanded.includes(purchase.id) ? 'Hide Items' : 'View Items' }}
             </button>
-            <button class="btn btn-sm btn-danger" @click="deletePurchase(purchase.id)">
-              Delete
-            </button>
+            <router-link :to="`/purchases/edit/${purchase.id}`" class="btn btn-sm btn-primary">Edit</router-link>
+            <button class="btn btn-sm btn-danger" @click="deletePurchase(purchase.id)">Delete</button>
           </td>
         </tr>
 
-        <!-- Expanded purchase items -->
-        <tr v-for="purchase in expandedPurchases" :key="'items-'+purchase.id">
+        <!-- Expanded items -->
+        <tr v-for="purchase in expandedPurchases" :key="'items-' + purchase.id">
           <td colspan="12">
             <table class="table table-sm table-bordered mb-0">
               <thead class="table-secondary">
@@ -70,12 +69,8 @@
                   <td>{{ formatCurrency(item.unit_price) }}</td>
                   <td>{{ formatCurrency(item.total_cost) }}</td>
                   <td class="d-flex gap-1">
-                    <button class="btn btn-sm btn-warning" @click="editItem(purchase.id, item)">
-                      Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger" @click="deleteItem(purchase.id, item.id)">
-                      Delete
-                    </button>
+                    <button class="btn btn-sm btn-warning" @click="editItem(purchase.id, item)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @click="deleteItem(purchase.id, item.id)">Delete</button>
                   </td>
                 </tr>
               </tbody>
@@ -144,11 +139,8 @@ export default {
         .finally(() => this.loading = false);
     },
     toggleItems(id) {
-      if(this.expanded.includes(id)) {
-        this.expanded = this.expanded.filter(i => i !== id);
-      } else {
-        this.expanded.push(id);
-      }
+      if(this.expanded.includes(id)) this.expanded = this.expanded.filter(i => i !== id);
+      else this.expanded.push(id);
     },
     deletePurchase(id) {
       if(confirm("Are you sure you want to delete this purchase?")) {
@@ -161,24 +153,20 @@ export default {
       }
     },
     editItem(purchaseId, item) {
-      this.editingItem = {...item}; // clone object to edit
+      this.editingItem = {...item};
       this.editingPurchaseId = purchaseId;
     },
     updateItem() {
       const item = this.editingItem;
-      DataService.UpdatePurchaseItem(item.id, {
-        quantity: item.quantity,
-        unit_price: item.unit_price
-      })
-      .then(res => {
-        // update frontend
-        const purchase = this.purchases.find(p => p.id === this.editingPurchaseId);
-        const idx = purchase.items.findIndex(i => i.id === item.id);
-        if(idx !== -1) purchase.items[idx] = res.data.item;
-        this.editingItem = null;
-        alert("Item updated successfully");
-      })
-      .catch(err => console.log(err));
+      DataService.UpdatePurchaseItem(item.id, { quantity: item.quantity, unit_price: item.unit_price })
+        .then(res => {
+          const purchase = this.purchases.find(p => p.id === this.editingPurchaseId);
+          const idx = purchase.items.findIndex(i => i.id === item.id);
+          if(idx !== -1) purchase.items[idx] = res.data.item;
+          this.editingItem = null;
+          alert("Item updated successfully");
+        })
+        .catch(err => console.log(err));
     },
     deleteItem(purchaseId, itemId) {
       if(confirm("Are you sure you want to delete this item?")) {
@@ -192,7 +180,18 @@ export default {
       }
     },
     formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString();
+    },
+    statusClass(status) {
+      switch(status) {
+        case 'paid': return 'badge bg-success';
+        case 'partial': return 'badge bg-warning';
+        case 'due': return 'badge bg-danger';
+        default: return 'badge bg-secondary';
+      }
     }
   }
 };
@@ -202,18 +201,11 @@ export default {
 .table { border-collapse: collapse; }
 .modal-backdrop {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top:0; left:0; right:0; bottom:0;
   background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
+  display:flex; justify-content:center; align-items:center; z-index:1050;
 }
 .modal-dialog {
-  background: #fff;
-  border-radius: 6px;
-  width: 400px;
-  max-width: 90%;
-  padding: 15px;
+  background:#fff; border-radius:6px; width:400px; max-width:90%; padding:15px;
 }
 </style>
