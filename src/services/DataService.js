@@ -124,6 +124,70 @@ DeletePurchaseItem(id) {
   return http.delete(`/purchase-items/${id}`);
 }
 
+// ===== SALES CRUD =====
+SaleList() {
+  return http.get("/sales");
+}
+
+GetSale(id) {
+  return http.get(`/sales/${id}`);
+}
+
+AddSale(data) {
+  return http.post("/sales", data);
+}
+
+UpdateSale(id, data) {
+  return http.put(`/sales/${id}`, data);
+}
+
+DeleteSale(id) {
+  return http.delete(`/sales/${id}`);
+}
+
+// ===== SALE ITEM CRUD =====
+SaleItemList() {
+  return http.get("/sale-items");
+}
+
+GetSaleItem(id) {
+  return http.get(`/sale-items/${id}`);
+}
+
+AddSaleItem(data) {
+  return http.post("/sale-items", data);
+}
+
+UpdateSaleItem(id, data) {
+  return http.put(`/sale-items/${id}`, data);
+}
+
+DeleteSaleItem(id) {
+  return http.delete(`/sale-items/${id}`);
+}
+
+// ===== CUSTOMER CRUD =====
+CustomerList() {
+  return http.get("/customers");
+}
+
+GetCustomer(id) {
+  return http.get(`/customers/${id}`);
+}
+
+AddCustomer(data) {
+  return http.post("/customers", data);
+}
+
+UpdateCustomer(id, data) {
+  return http.put(`/customers/${id}`, data);
+}
+
+DeleteCustomer(id) {
+  return http.delete(`/customers/${id}`);
+}
+
+
 
 
 

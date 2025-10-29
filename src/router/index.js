@@ -96,6 +96,45 @@ const routes = [
     component: () => import("../views/Purchases/PurchaseEdit.vue"),
     props: true,
   },
+  
+  // ===== Sales Routes =====
+{
+  path: "/sales",
+  name: "sale_list",
+  component: () => import("../views/Sales/SaleList.vue"),
+},
+{
+  path: "/sales/add",
+  name: "sale_create",
+  component: () => import("../views/Sales/SaleCreate.vue"),
+},
+{
+  path: "/sales/edit/:id",
+  name: "sale_edit",
+  component: () => import("../views/Sales/SaleEdit.vue"),
+  props: true,
+},
+
+// ===== CUSTOMER ROUTES =====
+{
+  path: "/customers",
+  name: "customer_list",
+  component: () => import("../views/Customers/CustomerList.vue")
+},
+{
+  path: "/customers/add",
+  name: "customer_create",
+  component: () => import("../views/Customers/CustomerCreate.vue")
+},
+{
+  path: "/customers/edit/:id",
+  name: "customer_edit",
+  component: () => import("../views/Customers/CustomerEdit.vue"),
+  props: true
+},
+
+
+
 
 
 ]

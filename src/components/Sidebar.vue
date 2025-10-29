@@ -52,7 +52,7 @@
             <ul v-show="openMenus.products" class="submenu">
               <li><router-link to="/products">Products</router-link></li>
               <li><router-link to="/categories">Categories</router-link></li>
-              <li><router-link to="/inventory-logs">Stock Logs</router-link></li>
+             
             </ul>
           </li>
 
@@ -76,8 +76,8 @@
               <span class="mtext">Sales</span>
             </a>
             <ul v-show="openMenus.sales" class="submenu">
-              <li><router-link to="/sales">All Sales</router-link></li>
-              <li><router-link to="/sales/add">Add Sale</router-link></li>
+              <li><router-link to="/sales">Sales</router-link></li>
+             
             </ul>
           </li>
 
