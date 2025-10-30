@@ -188,6 +188,34 @@ DeleteCustomer(id) {
 }
 
 
+// Employees
+EmployeeList() {
+  return http.get("/employees");
+}
+
+SingleEmployee(id) {
+  return http.get(`/employees/${id}`);
+}
+
+AddEmployee(data) {
+  return http.post("/employees", data, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+}
+
+UpdateEmployee(id, data) {
+  // Use POST with _method=PUT for Laravel PUT request
+  return http.post(`/employees/${id}`, data, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+}
+
+DeleteEmployee(id) {
+  return http.delete(`/employees/${id}`);
+}
+
+
+
 
 
 

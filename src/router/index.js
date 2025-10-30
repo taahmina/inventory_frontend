@@ -132,6 +132,23 @@ const routes = [
   component: () => import("../views/Customers/CustomerEdit.vue"),
   props: true
 },
+// ===== Employee Routes =====
+{
+  path: "/employees",
+  name: "employee_list",
+  component: () => import("../views/Employees/EmployeeList.vue"),
+},
+{
+  path: "/employees/add",
+  name: "employee_create",
+  component: () => import("../views/Employees/EmployeeCreate.vue"),
+},
+{
+  path: "/employees/edit/:id",
+  name: "employee_edit",
+  component: () => import("../views/Employees/EmployeeEdit.vue"),
+  props: true, // allow route params as props
+},
 
 
 

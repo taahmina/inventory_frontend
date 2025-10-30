@@ -33,7 +33,7 @@
           <td>{{ formatCurrency(sale.subtotal) }}</td>
           <td>{{ formatCurrency(sale.discount) }}</td>
           <td>{{ formatCurrency(sale.tax) }}</td>
-          <td>{{ formatCurrency(sale.total_cost) }}</td>
+          <td>{{ formatCurrency(sale.total_price) }}</td>
           <td>{{ formatCurrency(sale.paid_amount) }}</td>
           <td>{{ formatCurrency(sale.due_amount) }}</td>
           <td>
@@ -73,7 +73,7 @@
                   <td>{{ item.product?.name }}</td>
                   <td>{{ item.quantity }}</td>
                   <td>{{ formatCurrency(item.unit_price) }}</td>
-                  <td>{{ formatCurrency(item.total_cost) }}</td>
+                  <td>{{ formatCurrency(item.total_price) }}</td>
                   <td class="d-flex gap-1">
                     <button class="btn btn-sm btn-warning" @click="editItem(sale.id, item)">
                       Edit

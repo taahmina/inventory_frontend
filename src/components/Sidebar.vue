@@ -100,8 +100,8 @@
               <span class="mtext">Employees</span>
             </a>
             <ul v-show="openMenus.employees" class="submenu">
-              <li><router-link to="/employees">List Employees</router-link></li>
-              <li><router-link to="/salary-payments/add">Pay Salary</router-link></li>
+              <li><router-link to="/employees">Employees</router-link></li>
+              
             </ul>
           </li>
 
