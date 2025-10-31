@@ -29,8 +29,8 @@
           <td>{{ index + 1 }}</td>
           <td>
             <img
-              v-if="employee.profile_photo_url"
-              :src="employee.profile_photo_url"
+              v-if="employee.profile_photo"
+              :src="employee.profile_photo"
               alt="Photo"
               class="profile-photo"
             />
@@ -89,10 +89,11 @@ export default {
     fetchEmployees() {
       DataService.EmployeeList()
         .then((res) => {
+          // Map employees to handle nulls and status
           this.employees = res.data.map(emp => ({
             ...emp,
             status: emp.status != null ? Number(emp.status) : 0,
-            profile_photo_url: emp.profile_photo_url || null,
+            profile_photo: emp.profile_photo || null
           }));
         })
         .catch(err => console.log(err));

@@ -88,8 +88,8 @@
               <span class="mtext">Expenses</span>
             </a>
             <ul v-show="openMenus.expenses" class="submenu">
-              <li><router-link to="/expenses">List Expense</router-link></li>
-              <li><router-link to="/expenses/add">Add Expense</router-link></li>
+              <li><router-link to="/expenses">Expense</router-link></li>
+           
             </ul>
           </li>
 

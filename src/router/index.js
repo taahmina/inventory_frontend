@@ -150,6 +150,23 @@ const routes = [
   props: true, // allow route params as props
 },
 
+// ===== Expense Routes =====
+{
+  path: "/expenses",
+  name: "expense_list",
+  component: () => import("../views/Expenses/ExpenseList.vue"),
+},
+{
+  path: "/expenses/add",
+  name: "expense_create",
+  component: () => import("../views/Expenses/ExpenseCreate.vue"),
+},
+{
+  path: "/expenses/edit/:id",
+  name: "expense_edit",
+  component: () => import("../views/Expenses/ExpenseEdit.vue"),
+  props: true, // allow route params as props
+},
 
 
 

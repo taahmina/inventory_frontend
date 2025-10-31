@@ -202,9 +202,9 @@ AddEmployee(data) {
     headers: { "Content-Type": "multipart/form-data" }
   });
 }
-
 UpdateEmployee(id, data) {
-  // Use POST with _method=PUT for Laravel PUT request
+  // Append _method=PUT for Laravel to recognize the request as PUT
+  data.append('_method', 'PUT');
   return http.post(`/employees/${id}`, data, {
     headers: { "Content-Type": "multipart/form-data" }
   });
@@ -214,6 +214,26 @@ DeleteEmployee(id) {
   return http.delete(`/employees/${id}`);
 }
 
+// ===== EXPENSE CRUD =====
+ExpenseList() {
+  return http.get("/expenses");
+}
+
+GetExpense(id) {
+  return http.get(`/expenses/${id}`);
+}
+
+AddExpense(data) {
+  return http.post("/expenses", data);
+}
+
+UpdateExpense(id, data) {
+  return http.put(`/expenses/${id}`, data);
+}
+
+DeleteExpense(id) {
+  return http.delete(`/expenses/${id}`);
+}
 
 
 
