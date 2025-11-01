@@ -239,7 +239,28 @@ DeleteExpense(id) {
 
 
 
+// ===== REPORTS =====
+  GetSalesReport(params) {
+    return http.get("/reports/sales", { params });
+  }
+
+  GetExpenseReport(params) {
+    return http.get("/reports/expenses", { params });
+  }
+
+  GetProfitLossReport(params) {
+    return http.get("/reports/profit-loss", { params });
+  }
+
+  GetInventoryReport(params) {
+    return http.get("/reports/inventory", { params });
+  }
 }
+
+
+
+
+
 
 
 export default new DataService();

@@ -168,6 +168,38 @@ const routes = [
   props: true, // allow route params as props
 },
 
+// ===== Report Routes =====
+{
+  path: "/reports",
+  name: "report_list",
+  component: () => import("../views/Reports/ReportList.vue"),
+},
+
+{
+  path: "/reports/sales",
+  name: "report_sales",
+  component: () => import("../views/Reports/SalesReport.vue"),
+},
+
+{
+  path: "/reports/expenses",
+  name: "report_expenses",
+  component: () => import("../views/Reports/ExpenseReport.vue"),
+},
+
+{
+  path: "/reports/profit-loss",
+  name: "report_profit_loss",
+  component: () => import("../views/Reports/ProfitLossReport.vue"),
+},
+
+{
+  path: "/reports/inventory",
+  name: "report_inventory",
+  component: () => import("../views/Reports/InventoryReport.vue"),
+},
+
+
 
 
 

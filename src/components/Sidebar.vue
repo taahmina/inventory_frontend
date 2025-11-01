@@ -13,28 +13,14 @@
         <ul id="accordion-menu">
           <!-- Dashboard -->
           <li>
-            <router-link to="/">
-              <span class="micon dw dw-house-1"></span>
-              <span class="mtext">Dashboard</span>
-            </router-link>
+           
           </li>
 
-          <!-- User Management -->
-          <li class="dropdown">
-            <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('userManagement')">
-              <span class="micon dw dw-user1"></span>
-              <span class="mtext">User Management</span>
-            </a>
-            <ul v-show="openMenus.userManagement" class="submenu">
-              <li><router-link to="/users">Users</router-link></li>
-              <li><router-link to="/roles">Roles</router-link></li>
-            </ul>
-          </li>
 
           <!-- Contacts -->
           <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('contacts')">
-              <span class="micon dw dw-address-book1"></span>
+              <span class="micon dw dw-user1"></span>
               <span class="mtext">Contacts</span>
             </a>
             <ul v-show="openMenus.contacts" class="submenu">
@@ -59,7 +45,7 @@
           <!-- Purchases -->
           <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('purchases')">
-              <span class="micon dw dw-cart1"></span>
+              <span class="micon dw dw-wallet1"></span>
               <span class="mtext">Purchases</span>
             </a>
             <ul v-show="openMenus.purchases" class="submenu">
@@ -112,21 +98,22 @@
               <span class="mtext">Reports</span>
             </a>
             <ul v-show="openMenus.reports" class="submenu">
-              <li><router-link to="/reports/profit-loss">Profit/Loss Report</router-link></li>
-              <li><router-link to="/reports/sales">Sales Report</router-link></li>
-              <li><router-link to="/reports/purchases">Purchase Report</router-link></li>
-              <li><router-link to="/reports/expenses">Expense Report</router-link></li>
-              <li><router-link to="/reports/stock">Stock Report</router-link></li>
+              <li><router-link to="/reports">Report</router-link></li>
             </ul>
           </li>
 
           <!-- Settings -->
-          <li>
-            <router-link to="/settings">
+
+           <li class="dropdown">
+            <a href="javascript:;" class="dropdown-toggle" @click.prevent="toggleMenu('reports')">
               <span class="micon dw dw-settings2"></span>
               <span class="mtext">Settings</span>
-            </router-link>
+            </a>
+            <ul v-show="openMenus.reports" class="submenu">
+              <li><router-link to="">Report</router-link></li>
+            </ul>
           </li>
+          
         </ul>
       </div>
     </div>
