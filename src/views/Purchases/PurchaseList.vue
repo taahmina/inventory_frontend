@@ -1,131 +1,180 @@
 <template>
-  <div class="container mt-5">
-    <h2>Purchase List</h2>
+  <div class="purchase-page">
+    <!-- Header -->
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 shadow-sm p-3 rounded">
+      <h3 class="fw-bold text-white mb-0">
+        <i class="bi bi-receipt me-2"></i> Purchase Management
+      </h3>
+      <router-link to="/purchases/add" class="btn btn-gradient shadow-sm">
+        <i class="bi bi-plus-circle me-1"></i> Add Purchase
+      </router-link>
+    </div>
 
-    <router-link to="/purchases/add" class="btn btn-primary mb-3">
-      Add New Purchase
-    </router-link>
-
-    <div v-if="loading" class="alert alert-info">Loading purchases...</div>
-
-    <table v-else class="table table-bordered table-striped">
-      <thead class="table-light">
-        <tr>
-          <th>Invoice No</th>
-          <th>Supplier</th>
-          <th>Date</th>
-          <th>Subtotal</th>
-          <th>Discount</th>
-          <th>Tax</th>
-          <th>Total</th>
-          <th>Paid</th>
-          <th>Due</th>
-          <th>Status</th>
-          <th>Note</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="purchase in purchases" :key="purchase.id">
-          <td>{{ purchase.invoice_no }}</td>
-          <td>{{ purchase.supplier?.name }}</td>
-          <td>{{ formatDate(purchase.purchase_date) }}</td>
-          <td>{{ formatCurrency(purchase.subtotal) }}</td>
-          <td>{{ formatCurrency(purchase.discount) }}</td>
-          <td>{{ formatCurrency(purchase.tax) }}</td>
-          <td>{{ formatCurrency(purchase.total_cost) }}</td>
-          <td>{{ formatCurrency(purchase.paid_amount) }}</td>
-          <td>{{ formatCurrency(purchase.due_amount) }}</td>
-          <td>
-            <span :class="statusClass(purchase.payment_status)">
-              {{ purchase.payment_status?.toUpperCase() }}
-            </span>
-          </td>
-          <td>{{ purchase.note }}</td>
-          <td class="d-flex gap-1 flex-wrap">
-            <button class="btn btn-sm btn-info" @click="toggleItems(purchase.id)">
-              {{ expanded.includes(purchase.id) ? 'Hide Items' : 'View Items' }}
-            </button>
-            <router-link :to="`/purchases/edit/${purchase.id}`" class="btn btn-sm btn-primary">
-              Edit
-            </router-link>
-            <button class="btn btn-sm btn-danger" @click="deletePurchase(purchase.id)">
-              Delete
-            </button>
-          </td>
-        </tr>
-
-        <!-- Expanded Purchase Items -->
-        <tr v-for="purchase in expandedPurchases" :key="'items-' + purchase.id">
-          <td colspan="12">
-            <table class="table table-sm table-bordered mb-0">
-              <thead class="table-secondary">
-                <tr>
-                  <th>Product</th>
-                  <th>Quantity</th>
-                  <th>Unit Price</th>
-                  <th>Total</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in purchase.items" :key="item.id">
-                  <td>{{ item.product?.name }}</td>
-                  <td>{{ item.quantity }}</td>
-                  <td>{{ formatCurrency(item.unit_price) }}</td>
-                  <td>{{ formatCurrency(item.total_cost) }}</td>
-                  <td class="d-flex gap-1">
-                    <button class="btn btn-sm btn-warning" @click="editItem(purchase.id, item)">
-                      Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger" @click="deleteItem(purchase.id, item.id)">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-
-        <tr v-if="purchases.length === 0">
-          <td colspan="12" class="text-center">No purchases found</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Edit Item Modal -->
-    <div v-if="editingItem" class="modal-backdrop">
-      <div class="modal-dialog">
-        <div class="modal-content p-3">
-          <h5>Edit Item: {{ editingItem.product?.name }}</h5>
-
-          <div class="mb-2">
-            <label>Quantity</label>
-            <input
-              type="number"
-              v-model.number="editingItem.quantity"
-              min="1"
-              class="form-control"
-            />
-          </div>
-
-          <div class="mb-2">
-            <label>Unit Price</label>
-            <input
-              type="number"
-              v-model.number="editingItem.unit_price"
-              min="0"
-              step="0.01"
-              class="form-control"
-            />
-          </div>
-
-          <div class="d-flex gap-2">
-            <button class="btn btn-success" @click="updateItem">Save</button>
-            <button class="btn btn-secondary" @click="editingItem = null">Cancel</button>
-          </div>
+    <!-- Filter Section -->
+    <div class="card filter-card shadow-sm mb-4 p-4 border-0">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-dark">🔍 Search</label>
+          <input
+            type="text"
+            class="form-control"
+            v-model="filters.search"
+            placeholder="Search by invoice, supplier..."
+          />
         </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-dark">🏢 Supplier</label>
+          <select class="form-select" v-model="filters.supplier">
+            <option value="">All Suppliers</option>
+            <option v-for="sup in suppliers" :key="sup.id" :value="sup.id">{{ sup.name }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-2 d-flex">
+          <button class="btn btn-outline-primary w-100 reset-btn" @click="resetFilters">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Purchases Table -->
+    <div class="card shadow-lg border-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-primary">
+            <tr>
+              <th>#</th>
+              <th>Invoice No</th>
+              <th>Supplier</th>
+              <th>Date</th>
+              <th>Subtotal</th>
+              <th>Discount</th>
+              <th>Tax</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Due</th>
+              <th>Status</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(purchase, index) in paginatedPurchases"
+              :key="purchase.id"
+              class="accordion-header"
+            >
+              <td>{{ index + 1 + (currentPage - 1) * perPage }}</td>
+              <td>{{ purchase.invoice_no }}</td>
+              <td>{{ purchase.supplier?.name || '-' }}</td>
+              <td>{{ formatDate(purchase.purchase_date) }}</td>
+              <td>{{ formatCurrency(purchase.subtotal) }}</td>
+              <td>{{ formatCurrency(purchase.discount) }}</td>
+              <td>{{ formatCurrency(purchase.tax) }}</td>
+              <td>{{ formatCurrency(purchase.total_cost) }}</td>
+              <td>{{ formatCurrency(purchase.paid_amount) }}</td>
+              <td>{{ formatCurrency(purchase.due_amount) }}</td>
+              <td>
+                <span :class="statusClass(purchase.payment_status)">
+                  {{ purchase.payment_status?.toUpperCase() }}
+                </span>
+              </td>
+              <td class="text-center d-flex gap-1 flex-wrap justify-content-center">
+                <button class="btn btn-sm btn-info" @click="toggleItems(purchase.id)">
+                  <i
+                    :class="expanded.includes(purchase.id) ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"
+                  ></i>
+                </button>
+                <router-link :to="`/purchases/edit/${purchase.id}`" class="btn btn-sm btn-primary">
+                  Edit
+                </router-link>
+                <button class="btn btn-sm btn-danger" @click="deletePurchase(purchase.id)">
+                  Delete
+                </button>
+              </td>
+            </tr>
+
+            <!-- Expanded Accordion -->
+            <tr v-for="purchase in expandedPurchases" :key="'items-' + purchase.id">
+              <td colspan="12" class="p-0">
+                <transition name="accordion">
+                  <div class="accordion-body p-3" v-show="expanded.includes(purchase.id)">
+                    <h6 class="fw-semibold mb-2">
+                      <i class="bi bi-box-seam me-1"></i> Items for Invoice: {{ purchase.invoice_no }}
+                    </h6>
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle mb-0">
+                        <thead class="table-secondary">
+                          <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="item in purchase.items" :key="item.id">
+                            <td>{{ item.product?.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ formatCurrency(item.unit_price) }}</td>
+                            <td>{{ formatCurrency(item.total_cost) }}</td>
+                            <td class="d-flex gap-1 flex-wrap">
+                              <button class="btn btn-sm btn-warning" @click="editItem(purchase.id, item)">
+                                Edit
+                              </button>
+                              <button class="btn btn-sm btn-danger" @click="deleteItem(purchase.id, item.id)">
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </transition>
+              </td>
+            </tr>
+
+            <tr v-if="filteredPurchases.length === 0">
+              <td colspan="12" class="text-center py-4 text-muted">
+                <i class="bi bi-info-circle me-1"></i> No purchases found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="card-footer bg-white d-flex justify-content-between align-items-center border-top">
+        <small class="text-muted">
+          Showing {{ startItem }}–{{ endItem }} of {{ filteredPurchases.length }} results
+        </small>
+
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <button class="page-link" @click="currentPage--" :disabled="currentPage === 1">«</button>
+          </li>
+
+          <li
+            v-for="page in totalPages"
+            :key="page"
+            class="page-item"
+            :class="{ active: currentPage === page }"
+          >
+            <button class="page-link" @click="currentPage = page">{{ page }}</button>
+          </li>
+
+          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+            <button
+              class="page-link"
+              @click="currentPage++"
+              :disabled="currentPage === totalPages"
+            >
+              »</button>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -139,109 +188,86 @@ export default {
   data() {
     return {
       purchases: [],
+      suppliers: [],
+      filters: { search: "", supplier: "" },
       expanded: [],
-      loading: false,
+      currentPage: 1,
+      perPage: 10,
       editingItem: null,
       editingPurchaseId: null,
     };
   },
   computed: {
+    filteredPurchases() {
+      return this.purchases.filter((purchase) => {
+        const s = this.filters.search.toLowerCase();
+        const searchMatch =
+          purchase.invoice_no.toLowerCase().includes(s) ||
+          purchase.supplier?.name?.toLowerCase().includes(s);
+
+        const supplierMatch =
+          !this.filters.supplier || purchase.supplier_id == this.filters.supplier;
+
+        return searchMatch && supplierMatch;
+      });
+    },
+    totalPages() {
+      return Math.ceil(this.filteredPurchases.length / this.perPage);
+    },
+    paginatedPurchases() {
+      const start = (this.currentPage - 1) * this.perPage;
+      return this.filteredPurchases.slice(start, start + this.perPage);
+    },
+    startItem() {
+      return this.filteredPurchases.length === 0 ? 0 : (this.currentPage - 1) * this.perPage + 1;
+    },
+    endItem() {
+      return Math.min(this.startItem + this.perPage - 1, this.filteredPurchases.length);
+    },
     expandedPurchases() {
       return this.purchases.filter((p) => this.expanded.includes(p.id));
     },
   },
-  mounted() {
-    this.fetchPurchases();
-  },
   methods: {
-    // ===== Fetch All Purchases =====
     fetchPurchases() {
-      this.loading = true;
       DataService.PurchaseList()
         .then((res) => (this.purchases = res.data))
-        .catch((err) => console.error(err))
-        .finally(() => (this.loading = false));
-    },
-
-    // ===== Refresh Single Purchase (After Edit/Delete Item) =====
-    refreshSinglePurchase(id) {
-      DataService.GetPurchase(id)
-        .then((res) => {
-          const idx = this.purchases.findIndex((p) => p.id === id);
-          if (idx !== -1) this.$set(this.purchases, idx, res.data);
-        })
         .catch((err) => console.error(err));
     },
-
+    fetchSuppliers() {
+      DataService.SupplierList()
+        .then((res) => (this.suppliers = res.data))
+        .catch((err) => console.error(err));
+    },
+    resetFilters() {
+      this.filters = { search: "", supplier: "" };
+    },
     toggleItems(id) {
       if (this.expanded.includes(id)) {
         this.expanded = this.expanded.filter((i) => i !== id);
       } else {
         this.expanded.push(id);
-        // Auto-refresh latest data when expanding
-        this.refreshSinglePurchase(id);
       }
     },
-
     deletePurchase(id) {
       if (confirm("Are you sure you want to delete this purchase?")) {
         DataService.DeletePurchase(id)
-          .then(() => {
-            this.purchases = this.purchases.filter((p) => p.id !== id);
-            this.expanded = this.expanded.filter((i) => i !== id);
-            alert("Purchase deleted successfully");
-          })
+          .then(() => (this.purchases = this.purchases.filter((p) => p.id !== id)))
           .catch((err) => console.error(err));
       }
     },
-
     editItem(purchaseId, item) {
       this.editingItem = { ...item };
       this.editingPurchaseId = purchaseId;
     },
-
-    updateItem() {
-      const item = this.editingItem;
-      DataService.UpdatePurchaseItem(item.id, {
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-      })
-        .then(() => {
-          this.editingItem = null;
-          // ✅ Auto-refresh expanded purchase section after saving
-          if (this.expanded.includes(this.editingPurchaseId)) {
-            this.refreshSinglePurchase(this.editingPurchaseId);
-          }
-          alert("Item updated successfully");
-        })
-        .catch((err) => console.error(err));
-    },
-
-    deleteItem(purchaseId, itemId) {
-      if (confirm("Are you sure you want to delete this item?")) {
-        DataService.DeletePurchaseItem(itemId)
-          .then(() => {
-            // ✅ Auto-refresh expanded purchase section after deleting
-            if (this.expanded.includes(purchaseId)) {
-              this.refreshSinglePurchase(purchaseId);
-            }
-            alert("Item deleted successfully");
-          })
-          .catch((err) => console.error(err));
-      }
-    },
-
     formatCurrency(value) {
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(value || 0);
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+        value || 0
+      );
     },
-
     formatDate(date) {
       return new Date(date).toLocaleDateString();
     },
-
     statusClass(status) {
       switch (status) {
         case "paid":
@@ -255,31 +281,87 @@ export default {
       }
     },
   },
+  mounted() {
+    this.fetchPurchases();
+    this.fetchSuppliers();
+  },
 };
 </script>
 
-
 <style scoped>
-.table {
-  border-collapse: collapse;
+.purchase-page {
+  max-width: 1250px;
+  margin: auto;
+  background: linear-gradient(135deg, #f5f7ff 0%, #ffffff 100%);
+  padding: 20px;
+  border-radius: 12px;
 }
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
+
+.page-header {
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  color: #fff;
 }
-.modal-dialog {
-  background: #fff;
+
+.btn-gradient {
+  background: linear-gradient(90deg, #007bff, #00bfff);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.filter-card {
+  background-color: #f0f5ff;
+  border-left: 5px solid #007bff;
+  border-radius: 10px;
+}
+
+.form-label {
+  color: #333;
+}
+
+.reset-btn {
   border-radius: 6px;
-  width: 400px;
-  max-width: 90%;
-  padding: 15px;
+}
+
+.pagination .page-link {
+  color: #007bff;
+  border-radius: 5px;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
+/* Accordion Animation */
+.accordion-body {
+  overflow: hidden;
+}
+.accordion-enter-active,
+.accordion-leave-active {
+  transition: all 0.3s ease;
+}
+.accordion-enter-from,
+.accordion-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.accordion-enter-to,
+.accordion-leave-from {
+  max-height: 1000px;
+  opacity: 1;
 }
 </style>
