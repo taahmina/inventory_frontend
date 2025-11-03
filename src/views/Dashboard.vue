@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard p-4">
     <h2>Welcome to DeskApp Vue Dashboard</h2>
-    <p>This is your main dashboard page content.</p>
+    <p>This is the main dashboard page content.</p>
   </div>
 </template>
 

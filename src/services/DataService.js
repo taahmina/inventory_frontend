@@ -103,6 +103,11 @@ DeletePurchase(id) {
   return http.delete(`/purchases/${id}`);
 }
 
+
+GetPurchaseInvoice(id) {
+  return http.get(`/purchases/${id}/invoice`);
+}
+
 // ===== PURCHASE ITEM CRUD =====
 PurchaseItemList() {
   return http.get("/purchase-items");
@@ -164,6 +169,10 @@ UpdateSaleItem(id, data) {
 
 DeleteSaleItem(id) {
   return http.delete(`/sale-items/${id}`);
+}
+
+GetSaleInvoice(id) {
+  return http.get(`/sales/${id}/invoice`);
 }
 
 // ===== CUSTOMER CRUD =====

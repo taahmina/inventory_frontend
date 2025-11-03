@@ -110,7 +110,7 @@
               <span class="mtext">Settings</span>
             </a>
             <ul v-show="openMenus.reports" class="submenu">
-              <li><router-link to="">Report</router-link></li>
+              <li></li>
             </ul>
           </li>
           

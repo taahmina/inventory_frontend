@@ -52,6 +52,10 @@
             <button class="btn btn-sm btn-danger" @click="deleteSale(sale.id)">
               Delete
             </button>
+            <router-link :to="`/sales/invoice/${sale.id}`" class="btn btn-sm btn-secondary" title="View Invoice">
+            <i class="bi bi-receipt"></i>
+          </router-link>
+
           </td>
         </tr>
 

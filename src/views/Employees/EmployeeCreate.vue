@@ -116,7 +116,7 @@ export default {
         position: "",
         salary: null,
         joining_date: null,
-        termination_date: null,
+        termination_date: "",
         notes: "",
         status: 1
       },
@@ -141,10 +141,6 @@ export default {
       for (const key in this.employee) {
         let value = this.employee[key];
 
-        // Convert empty dates to null
-        if ((key === "joining_date" || key === "termination_date") && !value) {
-          value = null;
-        }
 
         // Skip profile_photo key here
         if (key === "profile_photo") continue;

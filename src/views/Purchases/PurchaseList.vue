@@ -80,19 +80,46 @@
                   {{ purchase.payment_status?.toUpperCase() }}
                 </span>
               </td>
-              <td class="text-center d-flex gap-1 flex-wrap justify-content-center">
-                <button class="btn btn-sm btn-info" @click="toggleItems(purchase.id)">
-                  <i
-                    :class="expanded.includes(purchase.id) ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"
-                  ></i>
-                </button>
-                <router-link :to="`/purchases/edit/${purchase.id}`" class="btn btn-sm btn-primary">
-                  Edit
-                </router-link>
-                <button class="btn btn-sm btn-danger" @click="deletePurchase(purchase.id)">
-                  Delete
-                </button>
-              </td>
+            <td class="text-center">
+  <div class="btn-group" role="group">
+    <!-- Toggle Items / Expand -->
+    <button
+      class="btn btn-sm btn-info"
+      @click="toggleItems(purchase.id)"
+      :title="expanded.includes(purchase.id) ? 'Collapse Items' : 'View Items'"
+    >
+      <i :class="expanded.includes(purchase.id) ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"></i>
+    </button>
+
+    <!-- Edit Purchase -->
+    <router-link
+      :to="`/purchases/edit/${purchase.id}`"
+      class="btn btn-sm btn-primary"
+      title="Edit Purchase"
+    >
+      <i class="bi bi-pencil-square"></i>
+    </router-link>
+
+    <!-- Delete Purchase -->
+    <button
+      class="btn btn-sm btn-danger"
+      @click="deletePurchase(purchase.id)"
+      title="Delete Purchase"
+    >
+      <i class="bi bi-trash"></i>
+    </button>
+
+    <!-- View Invoice -->
+    <router-link
+      :to="`/purchases/invoice/${purchase.id}`"
+      class="btn btn-sm btn-secondary"
+      title="View Invoice"
+    >
+      <i class="bi bi-receipt"></i>
+    </router-link>
+  </div>
+</td>
+
             </tr>
 
             <!-- Expanded Accordion -->
@@ -193,8 +220,6 @@ export default {
       expanded: [],
       currentPage: 1,
       perPage: 10,
-      editingItem: null,
-      editingPurchaseId: null,
     };
   },
   computed: {
@@ -250,15 +275,47 @@ export default {
       }
     },
     deletePurchase(id) {
-      if (confirm("Are you sure you want to delete this purchase?")) {
-        DataService.DeletePurchase(id)
-          .then(() => (this.purchases = this.purchases.filter((p) => p.id !== id)))
-          .catch((err) => console.error(err));
-      }
+      if (!confirm("Are you sure you want to delete this purchase?")) return;
+      DataService.DeletePurchase(id)
+        .then(() => {
+          this.purchases = this.purchases.filter((p) => p.id !== id);
+        })
+        .catch((err) => console.error(err));
+    },
+    deleteItem(purchaseId, itemId) {
+      if (!confirm("Are you sure you want to delete this item?")) return;
+
+      DataService.DeletePurchaseItem(itemId)
+        .then(() => {
+          const purchase = this.purchases.find((p) => p.id === purchaseId);
+          if (purchase) {
+            purchase.items = purchase.items.filter((i) => i.id !== itemId);
+          }
+        })
+        .catch((err) => console.error(err));
     },
     editItem(purchaseId, item) {
-      this.editingItem = { ...item };
-      this.editingPurchaseId = purchaseId;
+      const newUnitPrice = prompt(
+        `Update Unit Price for ${item.product?.name}`,
+        item.unit_price
+      );
+      if (newUnitPrice !== null) {
+        this.updateItem(purchaseId, item.id, parseFloat(newUnitPrice));
+      }
+    },
+    updateItem(purchaseId, itemId, newPrice) {
+      DataService.UpdatePurchaseItem(itemId, { unit_price: newPrice })
+        .then(() => {
+          const purchase = this.purchases.find((p) => p.id === purchaseId);
+          if (purchase) {
+            const item = purchase.items.find((i) => i.id === itemId);
+            if (item) {
+              item.unit_price = newPrice;
+              item.total_cost = item.quantity * newPrice;
+            }
+          }
+        })
+        .catch((err) => console.error(err));
     },
     formatCurrency(value) {
       return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(

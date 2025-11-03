@@ -1,22 +1,21 @@
 <template>
   <header class="header">
     <div class="header-left">
-      <div class="menu-icon dw dw-menu"></div>
-   
-      <h2 style="text-align: center;">InventoMart</h2>
+      <div class=""></div>
+  
 
     </div>
     
-<div class="header-right" v-if="uid">
-  <div class="user-info-dropdown">
-    <img :src="userImage" class="user-avatar" width="32" height="32" />
-    <span class="user-name">{{ userName }}</span>
-    <ul class="user-menu">
-      <li><a href="#"><i class=""></i></a></li>
-      <li><a href="#" class="text-danger" @click="logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-    </ul>
-  </div>
-</div>
+    <div class="header-right" v-if="uid">
+      <div class="user-info-dropdown">
+        <img :src="userImage" class="user-avatar" width="32" height="32" />
+        <span class="user-name">{{}}</span>
+        <ul class="user-menu">
+          <li><a href="#"><i class=""></i></a></li>
+          <li><a href="#" class="text-danger" @click="logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+        </ul>
+      </div>
+    </div>
 
 
 

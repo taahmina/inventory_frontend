@@ -96,6 +96,15 @@ const routes = [
     component: () => import("../views/Purchases/PurchaseEdit.vue"),
     props: true,
   },
+
+    // ===== Purchase invoice =====
+
+  {
+  path: "/purchases/invoice/:id",
+  name: "purchase_invoice",
+  component: () => import("../views/Purchases/PurchaseInvoice.vue"),
+},
+
   
   // ===== Sales Routes =====
 {
@@ -114,6 +123,16 @@ const routes = [
   component: () => import("../views/Sales/SaleEdit.vue"),
   props: true,
 },
+
+// ===== Sale invoice =====
+{
+  path: '/sales/invoice/:id',
+  name: 'sales_invoice',
+  component: () => import('../views/Sales/SalesInvoice.vue')
+},
+
+
+ 
 
 // ===== CUSTOMER ROUTES =====
 {
